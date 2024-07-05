@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Password Generator</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h2 class="container-title">Generate Password</h2>
+      <form id="passwordForm" class="password__form">
+        <!-- Password Display -->
+        <div class="password__form-group">
+          <label class="passwod__form-label" for="generatedPasssword"
+            >Generated Password</label
+          >
+          <div class="password__form-display">
+            <span id="generatedPassword">-----</span>
+            <div class="password__form-actions">
+              <button id="passwordCopy" type="button">Copy</button>
+              <button id="passwordRegen" type="submit">New</button>
+            </div>
+          </div>
+        </div>
+        <!-- Password Length -->
+        <div class="password__form-group">
+          <div class="password__form-display">
+            <label class="passwod__form-label" for="generatedPasssword"
+              >Password Length</label
+            >
+            <span id="passwordLengthDisplay">1</span>
+          </div>
+          <input
+            type="range"
+            name="passwordLength"
+            id="passwordLength"
+            min="1"
+            max="32"
+            value="1"
+          />
+        </div>
+        <!-- Password Settings -->
+        <div>
+          <label>Settings</label>
+          <div class="password__form-group password__form-group--alt">
+            <label class="passwod__form-label" for="includeUpper"
+              >Include uppercase</label
+            >
+            <input type="checkbox" name="includeUpper" id="includeUpper" />
+          </div>
+          <div class="password__form-group password__form-group--alt">
+            <label class="passwod__form-label" for="includeLower"
+              >Include lowercase</label
+            >
+            <input
+              checked
+              type="checkbox"
+              name="includeLower"
+              id="includeLower"
+            />
+          </div>
+          <div class="password__form-group password__form-group--alt">
+            <label class="passwod__form-label" for="includeNumbers"
+              >Include numbers</label
+            >
+            <input type="checkbox" name="includeNumbers" id="includeNumbers" />
+          </div>
+          <div class="password__form-group password__form-group--alt">
+            <label class="passwod__form-label" for="includeSymbols"
+              >Include symbols</label
+            >
+            <input type="checkbox" name="includeSymbols" id="includeSymbols" />
+          </div>
+        </div>
+        <button class="password__form-submit" type="submit">
+          Generate Password
+        </button>
+      </form>
+    </div>
+    <script>
+      const lowercase = [
+        "a",
+        "b",
+        "c",
+        "d",
+        "e",
+        "f",
+        "g",
+        "h",
+        "i",
+        "j",
+        "k",
+        "l",
+        "m",
+        "n",
+        "o",
+        "p",
+        "q",
+        "r",
+        "s",
+        "t",
+        "u",
+        "v",
+        "w",
+        "x",
+        "y",
+        "z",
+      ];
+      const uppercase = [...lowercase].map((letter) => letter.toUpperCase());
+      const numbers = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+      const symbols = [
+        "!",
+        "@",
+        "#",
+        "$",
+        "%",
+        "^",
+        "&",
+        "*",
+        "(",
+        ")",
+        "[",
+        "]",
+      ];
+
+      const form = document.querySelector("#passwordForm");
+      const lengthInput = document.querySelector("#passwordLength");
+      const includeUpper = document.querySelector("#includeUpper");
+      const includeLower = document.querySelector("#includeLower");
+      const includeNumbers = document.querySelector("#includeNumbers");
+      const includeSymbols = document.querySelector("#includeSymbols");
+      const passwordCopy = document.querySelector("#passwordCopy");
+      const passwordRegen = document.querySelector("#passwordRegen");
+      const lengthDisplay = document.querySelector("#passwordLengthDisplay");
+      const generatedPassword = document.querySelector("#generatedPassword");
+
+      const handlePasswordGen = () => {
+        if (
+          !includeUpper.checked &&
+          !includeLower.checked &&
+          !includeNumbers.checked &&
+          !includeSymbols.checked
+        ) {
+          alert(
+            "Must Have One Setting Enabled - Upper, Lower, Numbers, or Symbols"
+          );
+          return;
+        }
+        const length = parseInt(lengthInput.value);
+        let passArray = [];
+        if (includeUpper.checked) {
+          passArray = [...passArray, ...uppercase];
+        }
+        if (includeLower.checked) {
+          passArray = [...passArray, ...lowercase];
+        }
+        if (includeNumbers.checked) {
+          passArray = [...passArray, ...numbers];
+        }
+        if (includeSymbols.checked) {
+          passArray = [...passArray, ...symbols];
+        }
+
+        let newPass = "";
+        for (let i = 0; i < length; i++) {
+          newPass += passArray[Math.floor(Math.random() * passArray.length)];
+        }
+        return newPass;
+      };
+      // Handle form submit
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        generatedPassword.textContent = handlePasswordGen();
+      });
+      // Handle length change
+      lengthInput.addEventListener("change", (e) => {
+        e.preventDefault();
+        lengthDisplay.textContent = e.target.value;
+      });
+      // Handle copy password
+      passwordCopy.addEventListener("click", (e) => {
+        e.preventDefault();
+        if (generatedPassword.textContent === "-----") {
+          const newValue = handlePasswordGen();
+          if (newValue) {
+            generatedPassword.textContent = newValue;
+          } else return;
+        }
+        navigator.clipboard.writeText(generatedPassword.textContent);
+        alert("Text Copied to Clipboard");
+      });
+    </script>
+  </body>
+</html>
